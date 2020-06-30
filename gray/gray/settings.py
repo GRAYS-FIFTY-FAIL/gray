@@ -30,6 +30,14 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    # 'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 INSTALLED_APPS = [
     # Default
     'django.contrib.admin',
@@ -43,13 +51,17 @@ INSTALLED_APPS = [
     'django_extensions',
     'bootstrap4',
     'django.contrib.sites',
-    'media',
-    'django_static_md5url',
-
+    
     # APPS
     'analysis',
     'accounts',
     'community',
+
+    # allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +79,7 @@ ROOT_URLCONF = 'gray.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'gray', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'gray','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -136,3 +148,7 @@ PRODUCTION = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = (os.path.join(BASE_DIR, 'media'))
+
+
+SITE_ID = 2
+LOGIN_REDIRECT_URL = 'analysis:test'

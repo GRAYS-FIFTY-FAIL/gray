@@ -10,7 +10,6 @@
   integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
   integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
 <!-- summernote -->
 <link href="{% static 'summernote-0.8.18-dist/summernote-bs4.min.css' %}" rel="stylesheet">
 <script src="{% static 'summernote-0.8.18-dist/summernote-bs4.min.js' %}"></script>
@@ -236,6 +235,25 @@
           }
         });
       }
+      function word_check_all() {
+        len =words.length;
+        $.ajax({
+          cache: false,
+          type: "get",
+          data: {
+          },
+          success: function (data) {
+            var table = "";
+            for (var i = 0; i < len; i++) {
+              table += "<tr>"
+                + "<td>" + words[i][0] + "</td>"
+                + "<td>" + words[i][1] + "</td>"
+                + "</tr>"
+            };
+            document.getElementById('myTable').innerHTML = table
+          }
+        });
+      }
     </script>
   </div>
 
@@ -270,13 +288,21 @@
                     <th>Word</th>
                     <th>Senti</th>
                     <th>Prop</th>
+                    <th>Intensity</th>
                     <th>Count</th>
                   </tr>
                 </thead>
                 <tbody id="myTable2">
                 </tbody>
               </table>
-              <button class="btn btn-secondary btn-block" onclick="spell_check_more()">더 보기</button>
+              <div class="row">
+                <div class="col-xl-6">
+                  <button class="btn btn-secondary btn-block" onclick="senti_check_more()">더 보기</button>
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn btn-secondary btn-block" onclick="senti_check_all()">모두보기</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -340,6 +366,7 @@
                 + "<td>" + data['pos'][i][1] + "</td>"
                 + "<td>" + data['pos'][i][2] + "</td>"
                 + "<td>" + data['pos'][i][3] + "</td>"
+                + "<td>" + data['pos'][i][4] + "</td>"
                 + "</tr>"
             };
             document.getElementById('myTable2').innerHTML = table
@@ -347,7 +374,7 @@
 
         })
       }
-      function spell_check_more() {
+      function senti_check_more() {
         len += 10;
         $.ajax({
           cache: false,
@@ -365,6 +392,29 @@
                 + "<td>" + words[i][1] + "</td>"
                 + "<td>" + words[i][2] + "</td>"
                 + "<td>" + words[i][3] + "</td>"
+                + "<td>" + words[i][4] + "</td>"
+                + "</tr>"
+            };
+            document.getElementById('myTable2').innerHTML = table
+          }
+        });
+      }
+      function senti_check_all() {
+        len = words.length;
+        $.ajax({
+          cache: false,
+          type: "get",
+          data: {
+          },
+          success: function (data) {
+            var table = "";
+            for (var i = 0; i < len; i++) {
+              table += "<tr>"
+                + "<td>" + words[i][0] + "</td>"
+                + "<td>" + words[i][1] + "</td>"
+                + "<td>" + words[i][2] + "</td>"
+                + "<td>" + words[i][3] + "</td>"
+                + "<td>" + words[i][4] + "</td>"
                 + "</tr>"
             };
             document.getElementById('myTable2').innerHTML = table
