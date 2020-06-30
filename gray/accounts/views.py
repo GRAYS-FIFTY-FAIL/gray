@@ -15,9 +15,14 @@ from django.contrib import messages
 import requests
 import json
 
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+
+from allauth.account.views import SignupView
+
+
 # Create your views here.
 def index(request):
-    return redirect('analysis:analysis')
+    return render(request, 'accounts/index.html')
 
 def signup(request):
     if request.user.is_authenticated:
@@ -27,8 +32,8 @@ def signup(request):
             form = UserCreationForm(request.POST)
             if form.is_valid():
                 user = form.save()
+                auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 Profile.objects.create(user = user)
-                auth_login(request, user)
                 messages.success(request, '회원가입 완료')
                 return redirect('analysis:analysis')
             else:
@@ -70,8 +75,11 @@ def profile(request, username):
     }
     return render(request, 'accounts/profile.html', context)
 
+@login_required
 def profile_update(request):
-    if request.user.profile:
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    print(profile)
+    if profile:
         profile = request.user.profile
         if request.method =='POST':
             form = ProfileForm(request.POST, request.FILES, instance = profile)
@@ -121,7 +129,7 @@ def password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, '비밀번호 변경 완료')
-            return redirect('analysis:analysis')
+            return redirect('accounts:index')
         else:
             messages.success(request, '비밀번호 변경 못했어요 엉엉ㅠ')
     else:
