@@ -22,7 +22,7 @@ from allauth.account.views import SignupView
 
 # Create your views here.
 def index(request):
-    return render(request, 'accounts/index.html')
+    return redirect('analysis:analysis')
 
 def signup(request):
     if request.user.is_authenticated:
