@@ -6,17 +6,52 @@ from collections import Counter
 import pytagcloud
 import random
 from . import senti_dict
+import requests
 # Create your views here.
+
 
 def index(request):
     return redirect(request, 'analysis:analysis')
 
+
 def analysis(request):
-    return render(request, 'analysis/analysis.html')
+    key = 
+    url = "https://www.googleapis.com/youtube/v3/search"
+    q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
+    print(q)
+    my_type = "type=video"
+    part = "part=snippet"
+    maxResults = "maxResults=10"
+    requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
+    response = requests.get(requestUrl)
+    data = response.json()
+    youtube = list()
+    for i in data['items']:
+        youtube.append((i['snippet']['thumbnails']['medium']['url'],i['snippet']['title'],i['snippet']['publishedAt'][0:10],i['id']['videoId']))
+    context = {
+        'youtube':youtube,
+    }
+    return render(request, 'analysis/analysis.html', context)
 
 
 def test2(request):
-    return render(request, 'analysis/test2.html')
+    key = "AIzaSyD3kvta4Kf34Gvt9P3nUvFk6Jz9aVnVOF8"
+    url = "https://www.googleapis.com/youtube/v3/search"
+    q = "자기소개서"
+    print(q)
+    my_type = "type=video"
+    part = "part=snippet"
+    maxResults = "maxResults=10"
+    requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
+    response = requests.get(requestUrl)
+    data = response.json()
+    youtube = list()
+    for i in data['items']:
+        youtube.append((i['snippet']['thumbnails']['medium']['url'],i['snippet']['title'],i['snippet']['publishedAt'][0:10],i['id']['videoId']))
+    context = {
+        'youtube':youtube,
+    }
+    return render(request, 'analysis/test2.html', context)
 
 
 def spell_check(request):
@@ -71,7 +106,7 @@ def words_check(request):
         'hashing': hashing,
     }
     # 워드클라우드
-    taglist = pytagcloud.make_tags(nouns, minsize = 10,maxsize=60)
+    taglist = pytagcloud.make_tags(nouns, minsize=10, maxsize=60)
     link = 'static/wordcloud/wordcloud'+str(hashing)+'.jpg'
     #link = 'static/wordcloud/wordcloud.jpg'
     pytagcloud.create_tag_image(taglist, link, size=(
@@ -94,6 +129,10 @@ def senti_check(request):
     i = 0
     for data in words.keys():
         # pos.append((data[0]+"/"+data[1],words.get(data)))
+        if data[1] in ['VV', 'NNG', 'VA', 'VX', 'MAG', 'JKB']:
+            pass
+        else:
+            continue
         wordname = data[0]+"/"+data[1]
         a, b, c = senti_dict.Singleton().data_list(wordname)
         pos.append((wordname, a, b,  c, words.get(data)))
@@ -115,9 +154,13 @@ def senti_check(request):
     print(str(neg_p) + " "+str(neg_c))
     print(total)
     if pos_c+neg_c != 0:
-        print(total/(pos_c+neg_c))
+        total = total/(pos_c+neg_c)
+    print(total)
     pos.sort(key=lambda element: element[4], reverse=True)
     context = {
         'pos': pos,
+        'pos_p': round(pos_p,3),
+        'neg_p': round(neg_p,3),
+        'total': round(total,5),
     }
     return HttpResponse(json.dumps(context), content_type='application/json')

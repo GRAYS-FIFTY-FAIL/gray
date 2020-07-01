@@ -35,7 +35,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
-    # 'allauth.account.auth_backends.AuthenticationBackend',
+   'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 INSTALLED_APPS = [
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -143,7 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 PRODUCTION = True
 
 MEDIA_URL = '/media/'
@@ -151,4 +152,17 @@ MEDIA_ROOT = (os.path.join(BASE_DIR, 'media'))
 
 
 SITE_ID = 2
-LOGIN_REDIRECT_URL = 'analysis:test'
+SOCIAL_AUTH_URL_NAMESPACE = 'accounts'
+LOGIN_REDIRECT_URL = 'analysis:analysis'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}

@@ -7,19 +7,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>gray</title>
-  
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <!-- summernote 충돌방지 css, js -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
-
+  <!-- swiper를 위한 css, js  -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
+  <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
   <script>
     /* csrf_token을 ajax에서 사용하기 위해 작성 */
     function getCookie(name) {
@@ -83,6 +87,31 @@
     ::-webkit-scrollbar {
       display: none;
     }
+
+    .swiper-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+
+      /* Center slide text vertically */
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
   </style>
   {% block head %}
   {% endblock %}
@@ -114,14 +143,25 @@
             {% if user.is_authenticated %}
             <li class="nav-item">
               {% if user.profile.image %}
-              <img src="{{ user.profile.image.url }}" width="50px" alt="{{ user.profile.image }}">
+              <img class="rounded-circle" src="{{ user.profile.image.url }}" width="50px"
+                alt="{{ user.profile.image }}">
               {% else %}
               <img class="rounded-circle" src="{% static 'accounts/images/man.jpg' %}" width="50px" alt="">
               {% endif %}
             </li>
-            <li class="nav-item ml-3" style="align-self: flex-end; font-size: 18px; font-weight: 500;">
+            <li class="nav-item ml-1" style="align-self: flex-end; font-size: 18px; font-weight: 500;">
               {% if user.profile.nickname %}
-              {{ user.profile.nickname }}
+              <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="true" style="font-size: 18px;">
+                {{ user.profile.nickname }}
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="{% url 'accounts:logout' %}">로그아웃</a>
+                <a class="dropdown-item" href="{% url 'accounts:profile' user.username %}">프로필보기</a>
+                <a class="dropdown-item" href="{% url 'accounts:update' %}">개인정보 수정</a>
+                <a class="dropdown-item" href="{% url 'accounts:profile_update' %}">프로필 수정</a>
+                <a class="dropdown-item" href="{% url 'accounts:delete' %}">회원 탈퇴</a>
+              </div>
               {% else %}
 
               <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
@@ -175,7 +215,7 @@
     <!-- <div class="row bg-white mt-4 mx-2"> -->
     <div class="row">
       <div class="col-xl-2">
-        <div class="bg-white mt-4" style="height:300px; position: sticky; top:00px;">
+        <div class="bg-white mt-4 rounded-lg" style="height:300px; position: sticky; top:00px;">
           <div id="analysis" class="collapse">
             <ul class="nav nav-pills flex-column">
               <li class="nav-item m-1">
@@ -205,14 +245,66 @@
         </div>
       </div>
 
-      <div class="col-xl-10">
-        <div class="bg-white mt-4 pb-5" style="height:auto;">
+      <div class="col-xl-8">
+        <div class="bg-white mt-4 pb-5 rounded-lg" style="height:auto;">
           {% block body %}
           {% endblock %}
         </div>
       </div>
+      <div class="col-xl-2" style="height: 550px;">
+        <!-- Swiper -->
+        <div class="swiper-container">
 
+          <div class="swiper-wrapper">
+            {% for data in youtube %}
+
+            <div class="swiper-slide">
+              <a class="text-secondary" href="https://www.youtube.com/watch?v={{data.3}}" style="text-decoration: none;" target="_blank">
+                <div>
+                  <img class="card-img-top" src="{{data.0}}" alt="{{data.1}}">
+                  <p style="margin-bottom: 5px; font-size: 10px;">{{data.2}}</p>
+                  <p style="margin-top:3px; margin-bottom: 5px; font-size: 10px;">{{data.1|truncatechars:20}}</p>
+                </div>
+              </a>
+            </div>
+
+            {% endfor %}
+          </div>
+
+          <!-- Add Pagination -->
+          <!-- <div class="swiper-pagination"></div> -->
+          <!-- Add Arrows -->
+          <!-- <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div> -->
+
+        </div>
+        <script>
+          var swiper = new Swiper('.swiper-container', {
+            direction: 'vertical',
+            slidesPerView: 'auto',
+            slidesPerView: 3,
+            spaceBetween: 20,
+            slidesPerGroup: 2,
+            loop: true,
+            mousewheel: true,
+            centeredSlides: true,
+            freeMode: true,
+            autoplay: {
+              delay: 2500,
+              disableOnInteraction: false,
+            },
+            pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+            },
+            navigation: {
+              nextEl: '.swiper-button-next',
+            },
+          });
+        </script>
+      </div>
     </div>
+  </div>
   </div>
 
 

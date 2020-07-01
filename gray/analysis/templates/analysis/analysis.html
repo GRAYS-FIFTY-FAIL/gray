@@ -18,6 +18,7 @@
 {% endblock %}
 {% block body %}
 <div class="tab-content">
+  <!-- spell -->
   <div class="tab-pane container active" id="spell">
     <div class="row pt-5">
       <div class="col-xl-6">
@@ -105,6 +106,7 @@
       }
     </script>
   </div>
+  <!-- word -->
   <div class="tab-pane container fade" id="word">
     <div class="row pt-5">
       <div class="col-xl-8">
@@ -236,7 +238,7 @@
         });
       }
       function word_check_all() {
-        len =words.length;
+        len = words.length;
         $.ajax({
           cache: false,
           type: "get",
@@ -256,7 +258,7 @@
       }
     </script>
   </div>
-
+  <!-- senti -->
   <div class="tab-pane container fade" id="sentiment">
     <div class="row pt-5">
       <div class="col-xl-8">
@@ -307,23 +309,42 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-4">
-
-
+      <div class="col-xl-4 pr-5">
         <div class="spinner-border text-success" id="senti_check_loading"
           style="position: absolute;top: 0;visibility: hidden;"></div>
-        <script>
-          $(document).ready(function () {
-            $("#myInput2").on("keyup", function () {
-              var value = $(this).val().toLowerCase();
-              $("#myTable2 tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-              });
+        <div class="row" id="senti_result" style="visibility: hidden;">
+          <div class="col-xl-5">
+            <p class="text-right">긍정점수 :</p>
+            <p class="text-right">부정점수 :</p>
+          </div>
+          <div class="col-xl-7">
+            <p id="pos_p" class="text-left"></p>
+            <p id="neg_p" class="text-left"></p>
+          </div>
+          <div class="col-xl-6 p-0 progress w-25">
+            <div class="progress-bar bg-danger ml-auto" id ="neg_pb" style="width:0%"></div>
+          </div>
+          <div class="col-xl-6 p-0 progress w-25">
+            <div class="progress-bar bg-success" id="pos_pb" style="width:0%"></div>
+          </div>
+          <div class="col-xl-12 pt-5" id="total_pb">
+          </div>
+        </div>
+      </div>
+
+
+      <script>
+        $(document).ready(function () {
+          $("#myInput2").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable2 tr").filter(function () {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
           });
-        </script>
-      </div>
+        });
+      </script>
     </div>
+
     <script>
       var len;
       var words;
@@ -345,6 +366,7 @@
             }
             document.getElementById('senti_check_loading').setAttribute('style', 'position: absolute;top: 0;visibility: visible;')
             document.getElementById('senti_check_table').setAttribute('style', 'visibility: hidden;')
+            document.getElementById('senti_result').setAttribute('style', 'visibility: hidden;')
           },
 
           url: "{% url 'analysis:senti_check' %}",
@@ -354,8 +376,23 @@
           },
           success: function (data) {
             words = data['pos']
-            document.getElementById('senti_check_table').setAttribute('style', 'visibility: visible;')
             document.getElementById('senti_check_loading').setAttribute('style', 'position: absolute;top: 0;visibility: hidden;')
+            document.getElementById('senti_check_table').setAttribute('style', 'visibility: visible;')
+            document.getElementById('senti_result').setAttribute('style', 'visibility: visible;')
+            document.getElementById('pos_p').innerText = data['pos_p']
+            document.getElementById('neg_p').innerText = data['neg_p']
+
+            if(data['total']>=0){
+              document.getElementById('pos_pb').setAttribute('style','width:'+data['total']*100+'%')
+              document.getElementById('neg_pb').setAttribute('style','width:0%')
+              document.getElementById('total_pb').innerHTML = "<p style='display:inline'>전체 단어 중 "+"<h4 class='text-success' style='display:inline'>"+data['total']*100+"% </h4>"+"이상</p> <p>긍정적인 표현이 사용되었습니다.</p>"
+            } else {
+              document.getElementById('pos_pb').setAttribute('style','width:0%')
+              document.getElementById('neg_pb').setAttribute('style','width:'+data['total']*-100+'%')
+              document.getElementById('total_pb').innerHTML = "<p style='display:inline'>전체 단어 중 "+"<h4 class='text-danger' style='display:inline'>"+(data['total']*-100)+"% </h4>"+"이상</p> <p>부정적인 표현이 사용되었습니다.</p>"
+            }
+
+
             var table = "";
             if (len >= data['pos'].length) {
               len = data['pos'].length;
