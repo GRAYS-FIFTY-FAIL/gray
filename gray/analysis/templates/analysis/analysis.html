@@ -57,7 +57,7 @@
         </script>
         {% csrf_token %}
         <br>
-        <button class="btn btn-success float-right" type="button" onclick="spell_check()">검사하기</button>
+        <button class="btn btn-primary float-right" type="button" onclick="spell_check()">검사하기</button>
       </div>
       <div class="col-xl-6">
         <textarea id="spell_check_result" name="content"></textarea>
@@ -124,7 +124,7 @@
         <br>
         <div class="row">
           <div class="col-xl-12">
-            <button class="btn btn-success float-right" type="button" onclick="words_check()">검사하기</button>
+            <button class="btn btn-primary float-right" type="button" onclick="words_check()">검사하기</button>
           </div>
         </div>
         <div class="row">
@@ -150,7 +150,7 @@
           </table>
           <button class="btn btn-secondary btn-block" onclick="word_check_more()">더 보기</button>
         </div>
-        <div class="spinner-border text-success" id="words_check_loading"
+        <div class="spinner-border text-primary" id="words_check_loading"
           style="position: absolute;top: 0;visibility: hidden;"></div>
         <script>
           $(document).ready(function () {
@@ -276,7 +276,7 @@
         <br>
         <div class="row">
           <div class="col-xl-12">
-            <button class="btn btn-success float-right" type="button" onclick="senti_check()">검사하기</button>
+            <button class="btn btn-primary float-right" type="button" onclick="senti_check()">검사하기</button>
           </div>
         </div>
         <div class="row mt-5">
@@ -310,7 +310,7 @@
         </div>
       </div>
       <div class="col-xl-4 pr-5">
-        <div class="spinner-border text-success" id="senti_check_loading"
+        <div class="spinner-border text-primary" id="senti_check_loading"
           style="position: absolute;top: 0;visibility: hidden;"></div>
         <div class="row" id="senti_result" style="visibility: hidden;">
           <div class="col-xl-5">
@@ -383,16 +383,14 @@
             document.getElementById('neg_p').innerText = data['neg_p']
 
             if(data['total']>=0){
-              document.getElementById('pos_pb').setAttribute('style','width:'+data['total']*100+'%')
+              document.getElementById('pos_pb').setAttribute('style','width:'+data['total']+'%')
               document.getElementById('neg_pb').setAttribute('style','width:0%')
-              document.getElementById('total_pb').innerHTML = "<p style='display:inline'>전체 단어 중 "+"<h4 class='text-success' style='display:inline'>"+data['total']*100+"% </h4>"+"이상</p> <p>긍정적인 표현이 사용되었습니다.</p>"
+              document.getElementById('total_pb').innerHTML = "<p style='display:inline'>전체 단어 중 "+"<h4 class='text-success' style='display:inline'>"+data['total']+"% </h4>"+"이상</p> <p>긍정적인 표현이 사용되었습니다.</p>"
             } else {
               document.getElementById('pos_pb').setAttribute('style','width:0%')
-              document.getElementById('neg_pb').setAttribute('style','width:'+data['total']*-100+'%')
-              document.getElementById('total_pb').innerHTML = "<p style='display:inline'>전체 단어 중 "+"<h4 class='text-danger' style='display:inline'>"+(data['total']*-100)+"% </h4>"+"이상</p> <p>부정적인 표현이 사용되었습니다.</p>"
+              document.getElementById('neg_pb').setAttribute('style','width:'+(-data['total'])+'%')
+              document.getElementById('total_pb').innerHTML = "<p style='display:inline'>전체 단어 중 "+"<h4 class='text-danger' style='display:inline'>"+(-data['total'])+"% </h4>"+"이상</p> <p>부정적인 표현이 사용되었습니다.</p>"
             }
-
-
             var table = "";
             if (len >= data['pos'].length) {
               len = data['pos'].length;
