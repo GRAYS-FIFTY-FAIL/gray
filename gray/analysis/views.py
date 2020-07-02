@@ -8,14 +8,14 @@ import random
 from . import senti_dict
 import requests
 # Create your views here.
-
+from decouple import config
 
 def index(request):
     return redirect(request, 'analysis:analysis')
 
 
 def analysis(request):
-    key = 
+    key = "AIzaSyD3kvta4Kf34Gvt9P3nUvFk6Jz9aVnVOF8"
     url = "https://www.googleapis.com/youtube/v3/search"
     q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
     print(q)
@@ -23,6 +23,7 @@ def analysis(request):
     part = "part=snippet"
     maxResults = "maxResults=10"
     requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
+    print(requestUrl)
     response = requests.get(requestUrl)
     data = response.json()
     youtube = list()
@@ -32,28 +33,7 @@ def analysis(request):
         'youtube':youtube,
     }
     return render(request, 'analysis/analysis.html', context)
-
-
-def test2(request):
-    key = "AIzaSyD3kvta4Kf34Gvt9P3nUvFk6Jz9aVnVOF8"
-    url = "https://www.googleapis.com/youtube/v3/search"
-    q = "자기소개서"
-    print(q)
-    my_type = "type=video"
-    part = "part=snippet"
-    maxResults = "maxResults=10"
-    requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
-    response = requests.get(requestUrl)
-    data = response.json()
-    youtube = list()
-    for i in data['items']:
-        youtube.append((i['snippet']['thumbnails']['medium']['url'],i['snippet']['title'],i['snippet']['publishedAt'][0:10],i['id']['videoId']))
-    context = {
-        'youtube':youtube,
-    }
-    return render(request, 'analysis/test2.html', context)
-
-
+    
 def spell_check(request):
     # 가져온 텍스트 정제 1.줄바꿈 맞춰주기
     data = request.POST.get('data')
@@ -155,12 +135,13 @@ def senti_check(request):
     print(total)
     if pos_c+neg_c != 0:
         total = total/(pos_c+neg_c)
+    total = round(total*100,1)
     print(total)
     pos.sort(key=lambda element: element[4], reverse=True)
     context = {
         'pos': pos,
         'pos_p': round(pos_p,3),
         'neg_p': round(neg_p,3),
-        'total': round(total,5),
+        'total': total,
     }
     return HttpResponse(json.dumps(context), content_type='application/json')
