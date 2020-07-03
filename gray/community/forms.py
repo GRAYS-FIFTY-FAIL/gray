@@ -9,7 +9,9 @@ class CommunityForm(forms.ModelForm):
         exclude = ['user','hits','like_users','recommend_users','date','content']
 
 class CommentForm(forms.ModelForm):
+    content = forms.CharField(label=False)
     class Meta:
         model = Comment
         #fields = '__all__'
+        
         exclude=['article', 'user']
