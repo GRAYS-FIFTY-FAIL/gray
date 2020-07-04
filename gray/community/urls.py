@@ -15,5 +15,7 @@ urlpatterns = [
 
     path('all_paging/',views.all_paging, name='all_paging'),
     path('popular_paging/',views.popular_paging, name='popular_paging'),
+    path('all_search/', views.all_search, name='all_search'),
+    path('popular_search/', views.popular_search, name='popular_search'),
     
 ]

@@ -1,30 +1,60 @@
 {% extends 'base_accounts1.html' %}
 {% load bootstrap4 %}
 
-{% block body %}
-<div class="container">
-  <div class="row">
-    <div class="col-3">
-      <h1>
-        {% if person.profile.image %}
-        <img src="{{ person.profile.image.url }}" width=70, alt="{{ person.profile.image }}">
-        {% endif %}
-        {{ person.username }}
-      </h1>
-    </div>
+{% block head %}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+{% endblock%}
 
-    <div class="col-9">
-      <div>
-        <strong>{{ person.profile.nickname }}</strong>
+{% block body %}
+<div class="">
+  <div class="container">
+    <div class="row p-5">
+      <div class="col-xl-12">
+        <div class="row border rounded-lg p-5">
+          <div class="col-xl-3">
+            <h1>
+              {% if person.profile.image %}
+              <img src="{{ person.profile.image.url}}" width=120, alt="{{ person.profile.image }}">
+              <br />
+              <br />
+              {% endif %}
+              {% if person.profile.nickname %}
+              {{ person.profile.nickname }}
+              {% else %}
+              {{ person.username }}
+              {% endif %}
+            </h1>
+          </div>
+          <div class="col-xl-9">
+            <h2> 소개 </h2>
+            <hr />
+            <div>
+              {{ person.profile.introduction | safe }}
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        {{ person.profile.introduction }}
+    </div>
+    <div class="row p-3">
+      <div class="col-xl-12">
+        {% buttons %}
+        {% if person == user %}
+        <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary "
+          style="float:right; font-size: 20px;">수정하기</a>
+        {% endif %}
+        <a href="{% url 'accounts:index' %}" class="btn btn-primary  mr-3"
+          style="float: right; font-size: 20px;">돌아가기</a>
+
+        {% endbuttons %}
       </div>
     </div>
   </div>
-
 </div>
-
-  <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary" style="font-size: 20px;">프로필 수정하기</a>
-  <a href="{% url 'accounts:index' %}" class="btn btn-primary" style="float: right; font-size: 20px;">back</a>
 {% endblock %}
