@@ -12,6 +12,7 @@ from datetime import datetime
 import json
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 # Create your views here.
 
@@ -59,17 +60,21 @@ def detail(request, community_pk):
 
 @login_required
 def create(request):
+    print("???")
     if request.method == "POST":
+        print("post")
         form = CommunityForm(request.POST, request.FILES)
         if form.is_valid():
+            print("isvalid")
             article = form.save(commit=False)
             article.user = request.user
             article.content = request.POST.get('content')
             myDate = datetime.now()
             formatedDate = myDate.strftime("%Y.%m.%d")
-
+            print("중간")
             article.date = formatedDate
             article.save()
+            print("마지막")
             messages.success(request, '게시글 작성 완료')
             return redirect('community:detail', article.pk)
         else:
@@ -233,4 +238,40 @@ def popular_paging(request):
         'end_page':int(paginator.num_pages-2),
     }
 
+    return JsonResponse(context)
+
+def all_search(request):
+    search = request.GET.get('search')
+    articles = Community.objects.filter(Q(title__icontains=search)|Q(content__icontains=search)).order_by('-pk')
+    articles = articles.values()
+    articles = list(articles)
+    for data in articles:
+        data['comments'] = len(Comment.objects.filter(
+            article=Community.objects.get(pk=data['id'])))
+        data['user'] = User.objects.get(pk=data['user_id']).username
+        data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
+        data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
+    print(articles)
+    context = {
+        'articles': articles,
+        'len':len(articles),
+    }
+    return JsonResponse(context)
+
+def popular_search(request):
+    search = request.GET.get('search')
+    articles = Community.objects.filter(Q(title__icontains=search)|Q(content__icontains=search)).order_by('-hits')
+    articles = articles.values()
+    articles = list(articles)
+    for data in articles:
+        data['comments'] = len(Comment.objects.filter(
+            article=Community.objects.get(pk=data['id'])))
+        data['user'] = User.objects.get(pk=data['user_id']).username
+        data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
+        data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
+    print(articles)
+    context = {
+        'articles': articles,
+        'len':len(articles),
+    }
     return JsonResponse(context)

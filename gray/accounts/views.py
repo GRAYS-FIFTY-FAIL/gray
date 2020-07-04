@@ -24,6 +24,7 @@ from allauth.account.views import SignupView
 def index(request):
     return redirect('analysis:analysis')
 
+
 def signup(request):
     if request.user.is_authenticated:
         return redirect('analysis:analysis')
@@ -32,8 +33,9 @@ def signup(request):
             form = UserCreationForm(request.POST)
             if form.is_valid():
                 user = form.save()
-                auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-                Profile.objects.create(user = user)
+                auth_login(request, user,
+                           backend='django.contrib.auth.backends.ModelBackend')
+                Profile.objects.create(user=user)
                 messages.success(request, '회원가입 완료')
                 return redirect('analysis:analysis')
             else:
@@ -41,9 +43,10 @@ def signup(request):
         else:
             form = UserCreationForm()
         context = {
-            'form' : form
+            'form': form
         }
     return render(request, 'accounts/signup.html', context)
+
 
 def login(request):
     if request.user.is_authenticated:
@@ -59,67 +62,85 @@ def login(request):
                 messages.error(request, '로그인 못했어요 엉엉~')
         else:
             form = AuthenticationForm
-        context={
-            'form' : form
+        context = {
+            'form': form
         }
     return render(request, 'accounts/login.html', context)
+
 
 def logout(request):
     auth_logout(request)
     return redirect('analysis:analysis')
 
+
 def profile(request, username):
-    person = get_object_or_404(get_user_model(), username = username)
+    person = get_object_or_404(get_user_model(), username=username)
     context = {
-        'person' : person
+        'person': person
     }
     return render(request, 'accounts/profile.html', context)
+
 
 @login_required
 def profile_update(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
+    introduction = ""
     print(profile)
     if profile:
         profile = request.user.profile
-        if request.method =='POST':
-            form = ProfileForm(request.POST, request.FILES, instance = profile)
+        if request.method == 'POST':
+            form = ProfileForm(request.POST, request.FILES, instance=profile)
             if form.is_valid:
-                form.save()
+                p = form.save(commit=False)
+                p.introduction = request.POST.get('introduction')
+                p.save()
                 messages.success(request, '프로필 수정 완료')
                 return redirect('accounts:profile', request.user.username)
             else:
                 messages.error(request, '회원가입 못했어요 엉엉~')
         else:
-            form = ProfileForm(instance = profile)
+            form = ProfileForm(instance=profile)
+            introduction = profile.introduction
     else:
-        Profile.objects.create(user = request.user)
-        form = ProfileForm(request.POST, request.FILES, instance = profile)
+        Profile.objects.create(user=request.user)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+    if introduction == "":
+        introduction = "<p>이메일 : </p> <p>한 줄 소개 : </p> <p>홈페이지 : </p>"
     context = {
-            'form' : form
-        }
+        'form': form ,
+        'introduction': introduction
+    }
     return render(request, 'accounts/profile_update.html', context)
+
 
 @login_required
 def delete(request):
     request.user.delete()
     return redirect('analysis:analysis')
 
+
 @login_required
 def update(request):
     if request.method == 'POST':
-        form = CustomUserChangeForm(request.POST, instance = request.user)
-        if form.is_valid():
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        p_form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid() and p_form.is_valid():
             form.save()
+            user = p_form.save()
+            update_session_auth_hash(request, user)
             messages.success(request, '개인정보 수정 완료')
             return redirect('analysis:analysis')
         else:
             messages.success(request, '개인정보 수정 못했어요 엉엉~')
     else:
-        form = CustomUserChangeForm(instance = request.user)
+        form = CustomUserChangeForm(instance=request.user)
+        p_form = PasswordChangeForm(request.user, request.POST)
     context = {
-        'form' : form
+        'form': form,
+        'p_form': p_form
     }
     return render(request, 'accounts/update.html', context)
+
 
 @login_required
 def password(request):
@@ -135,6 +156,6 @@ def password(request):
     else:
         form = PasswordChangeForm(request.user)
     context = {
-        'form' : form
+        'form': form
     }
     return render(request, 'accounts/password.html', context)
