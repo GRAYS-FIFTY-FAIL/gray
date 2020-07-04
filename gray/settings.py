@@ -25,7 +25,6 @@ SECRET_KEY = 'fd68sxf18hv+#=thh#6yf*d+7ccude*a2(s6mmes2jvpf0s0*%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -166,3 +165,9 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+ALLOWED_HOSTS = [
+    './compute.amazonaws.com',
+    '*',
+]
