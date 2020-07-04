@@ -36,10 +36,20 @@ class Community(models.Model):
         blank=True
     )
 
+    comment_select_users=models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='comment_select_users',
+        blank=True
+    )
+
     @property
     def click(self):
         self.hits+=1
         self.save()
+
+    def __str__(self):
+        return f'{self.pk}번째 글, {self.title}-{self.content}'
+
 
 class Comment(models.Model):
     # models.ForeignKey(상속받을 클래스명, Article이 삭제되었을때 어떻게 할것인지)

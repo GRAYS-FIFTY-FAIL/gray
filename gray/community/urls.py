@@ -17,5 +17,5 @@ urlpatterns = [
     path('popular_paging/',views.popular_paging, name='popular_paging'),
     path('all_search/', views.all_search, name='all_search'),
     path('popular_search/', views.popular_search, name='popular_search'),
-    
+    path('<int:community_pk>/comment_select/<int:comment_pk>',views.comment_select, name="comment_select"),
 ]

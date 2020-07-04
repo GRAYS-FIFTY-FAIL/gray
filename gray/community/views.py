@@ -275,3 +275,22 @@ def popular_search(request):
         'len':len(articles),
     }
     return JsonResponse(context)
+
+@login_required
+def comment_select(request,community_pk, comment_pk):
+    article=get_object_or_404(Community,pk=community_pk)
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    
+    user=comment.user
+    
+    # 사용자가 채택 인원이 없으면 지우고 없으면 추가한다.
+    if user in article.comment_select_users.all():
+        article.comment_select_users.remove(user)
+        likedd = False
+    else:
+        article.comment_select_users.add(user)
+        likedd = True
+    context = {
+        'likedd': likedd,
+    }
+    return JsonResponse(context)

@@ -97,6 +97,14 @@
           <span>{{ comment.content }}</span>
 
         </div>
+
+        <div class="col-xl-2 text-right">
+
+          {% if article.user.username == user.username %}
+          {% include 'community/_selectComment.html' %}
+          {% endif %}
+        </div>
+
         <div class="col-xl-2 text-right">
           {% if comment.user.username == user.username %}
           <form action="{% url 'community:comment_delete' article.pk comment.pk %}" method="POST">
@@ -124,6 +132,7 @@
       <hr>
 
       <script src="{% static 'community/js/like.js' %}"></script>
+      <script src="{% static 'community/js/selectComment.js' %}"></script>
     </div>
   </div>
 </div>
