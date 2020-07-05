@@ -75,6 +75,7 @@ def detail(request,community_pk):
     # 1은 N을 보장할 수 없기 때문에 querySet(comment_set)형태로 조회해야한다.
     comments = article.comment_set.all()
     article.click  # 조회수
+    print(request.get_full_path)
     context = {
         'article': article,
         'comments': comments,

@@ -18,11 +18,12 @@
 <script src="{% static 'summernote-0.8.18-dist/summernote-bs4.min.js' %}"></script>
 <script src="https://kit.fontawesome.com/cfae7cf239.js" crossorigin="anonymous"></script>
 <style>
-  #id_content{
+  #id_content {
     height: 100px;
     width: inherit;
   }
-  #f .form-group{
+
+  #f .form-group {
     margin-bottom: 0px;
     width: 100%;
   }
@@ -75,8 +76,8 @@
         </div>
         <div class="col-xl-3"></div>
         <div class="col-xl-5" align="right">
-          <span style="font-size: 0.8vmax;">Http://damoim.naver.com/webclient/164121</span>
-          <kbd type="button"
+          <span style="font-size: 0.8vmax;">{{request.get_full_path }}</span>
+          <kbd type="button" onclick="copyToClipboard('{{request.build_absolute_uri}}')"
             style="background-color: white; border: none 1px; color: black; font-weight: bold; font-size: 0.9vmax;">주소복사</kbd>
         </div>
       </div>
@@ -146,7 +147,16 @@
         </div>
       </form>
       <hr>
-
+      <script>
+        function copyToClipboard(val) {
+          var t = document.createElement("textarea");
+          document.body.appendChild(t);
+          t.value = val;
+          t.select();
+          document.execCommand('copy');
+          document.body.removeChild(t);
+        }
+      </script>
       <script src="{% static 'community/js/like.js' %}"></script>
       <script src="{% static 'community/js/selectComment.js' %}"></script>
     </div>
