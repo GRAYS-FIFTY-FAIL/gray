@@ -170,6 +170,7 @@
         for (i = 0; i < data['articles'].length; i++) {
           const titleTag = document.getElementById('comment_title_' + i)
           titleTag.innerText = data['articles'][i]['title']
+          titleTag.setAttribute('href',`javascript:detail(${data['articles'][i]['id']},'${data['articles'][i]['title']}')`)
           const b = document.createElement('b')
           b.innerText = ` [${data['articles'][i]['comments']}]`
           b.style.color = 'red'
