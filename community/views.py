@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404 , HttpResponse
 from .models import Community, Comment
 from .forms import CommunityForm, CommentForm
 # DVDH
@@ -137,7 +137,7 @@ def delete(request, community_pk):
     article = get_object_or_404(Community, pk=community_pk)
     if article.user.username == request.user.username:
         article.delete()
-        return redirect('community:index')
+        return HttpResponse('<script type="text/javascript">window.close(); window.opener.parent.location.href = "javascript:all_paging(1)";</script>')
 
 
 @login_required
