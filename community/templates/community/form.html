@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_accounts1.html' %}
 {% load bootstrap4 %}
 {% load static %}
 
@@ -32,7 +32,7 @@
       <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <textarea id="resume_article" name="content"></textarea>
+        <textarea id="resume_article" name="content">{{content}}</textarea>
         <script>
           $('#resume_article').summernote(
             {
@@ -48,7 +48,7 @@
         <div class="row">
           <div class="col-xl-12 text-right">
             {% buttons %}
-            <a href="{% url 'community:index' %}"><button type="button"" class=" btn btn-primary">
+            <a href="{% url 'community:detail' community_pk %}"><button type="button"" class=" btn btn-primary">
                 취소
               </button></a>
             <button type="submit" class="btn btn-primary">

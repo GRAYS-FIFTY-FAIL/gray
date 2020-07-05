@@ -11,9 +11,10 @@ from .models import Profile
 from .forms import ProfileForm
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-
+from community.models import Community, Comment
 import requests
 import json
+from django.db.models import Q
 
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
@@ -75,7 +76,21 @@ def logout(request):
 
 def profile(request, username):
     person = get_object_or_404(get_user_model(), username=username)
+    
+    # 채택받은 게시물
+    selected = Community.objects.filter(comment__in=Comment.objects.filter(Q(user=person)&Q(comment_select_users__isnull=False)))
+    # 좋아요 누른 게시물 목록
+    liked = Community.objects.filter(like_users=person)
+    # 작성한 게시물
+    articles = Community.objects.filter(user=person)
+    # 좋아요받은 게시물 개수
+    like = Community.objects.filter(Q(user=person)&Q(like_users__isnull=False)).count()
+    print(like)
     context = {
+        'like':like,
+        'articles':articles,
+        'selected':selected,
+        'liked':liked,
         'person': person
     }
     return render(request, 'accounts/profile.html', context)

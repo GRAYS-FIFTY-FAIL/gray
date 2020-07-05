@@ -22,8 +22,11 @@
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
   <!-- swiper를 위한 css, js  -->
-  <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
-  <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script src="https://kit.fontawesome.com/cfae7cf239.js" crossorigin="anonymous"></script>
   <script>
     /* csrf_token을 ajax에서 사용하기 위해 작성 */
     function getCookie(name) {
@@ -115,6 +118,16 @@
       -webkit-align-items: center;
       align-items: center;
 
+    }
+
+    #id_content {
+      height: 100px;
+      width: inherit;
+    }
+
+    #f .form-group {
+      margin-bottom: 0px;
+      width: 100%;
     }
   </style>
   {% block head %}
