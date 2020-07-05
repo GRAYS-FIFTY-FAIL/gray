@@ -13,10 +13,12 @@ import json
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.db.models import Q
-
+from decouple import config
+import random
+import requests
 # Create your views here.
 
-
+@login_required
 def index(request):
     # embed()
     articles = Community.objects.all().order_by('-pk')
@@ -33,17 +35,36 @@ def index(request):
     articles = paginator.get_page(page)
     populars = paginator_popular.get_page(page)
     form = CommunityForm()
+    comment_form = CommentForm()
+    key = config('KEY')
+    
+    url = "https://www.googleapis.com/youtube/v3/search"
+    q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
+    print(q)
+    my_type = "type=video"
+    part = "part=snippet"
+    maxResults = "maxResults=10"
+    requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
+    print(requestUrl)
+    response = requests.get(requestUrl)
+    data = response.json()
+    youtube = list()
+    for i in data['items']:
+        youtube.append((i['snippet']['thumbnails']['medium']['url'],i['snippet']['title'],i['snippet']['publishedAt'][0:10],i['id']['videoId']))
+
     context = {
         'articles': articles,
         'populars':populars,
         'page': int(page),
         'end_page': int(articles.paginator.num_pages-2),
-        'form': form
+        'form': form,
+        'comment_form': comment_form,
+        'youtube':youtube,
     }
     return render(request, 'community/index.html', context)
 
-
-def detail(request, community_pk):
+@login_required
+def detail(request,community_pk):
     article = get_object_or_404(Community, pk=community_pk)
     comment_form = CommentForm()
     # 1은 N을 보장할 수 없기 때문에 querySet(comment_set)형태로 조회해야한다.
@@ -60,21 +81,16 @@ def detail(request, community_pk):
 
 @login_required
 def create(request):
-    print("???")
     if request.method == "POST":
-        print("post")
         form = CommunityForm(request.POST, request.FILES)
         if form.is_valid():
-            print("isvalid")
             article = form.save(commit=False)
             article.user = request.user
             article.content = request.POST.get('content')
             myDate = datetime.now()
             formatedDate = myDate.strftime("%Y.%m.%d")
-            print("중간")
             article.date = formatedDate
             article.save()
-            print("마지막")
             messages.success(request, '게시글 작성 완료')
             return redirect('community:detail', article.pk)
         else:
@@ -94,12 +110,16 @@ def update(request, community_pk):
         if request.method == "POST":
             form = CommunityForm(request.POST, instance=article)
             if form.is_valid():
-                article = form.save()
+                article = form.save(commit=False)
+                article.content = request.POST.get('content')
+                article.save()
                 return redirect('community:detail', article.pk)
         else:
             form = CommunityForm(instance=article)
         context = {
-            'form': form
+            'community_pk':community_pk,
+            'form': form,
+            'content':article.content
         }
         return render(request, 'community/form.html', context)
 
@@ -196,17 +216,19 @@ def all_paging(request):
     page = request.GET.get('page')
     if page == None:
         page = 1
-    print(page)
     articles = paginator.get_page(page).object_list.values()
     articles = list(articles)
-    print(articles)
+    
     for data in articles:
         data['comments'] = len(Comment.objects.filter(
             article=Community.objects.get(pk=data['id'])))
         data['user'] = User.objects.get(pk=data['user_id']).username
+        print(User.objects.get(pk=data['user_id']))
+        if User.objects.get(pk=data['user_id']).profile:
+            data['nickname'] = User.objects.get(pk=data['user_id']).profile.nickname
         data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
         data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
-    
+    print(articles)
     context = {
         'articles': articles,
         'page':int(page),
@@ -229,6 +251,8 @@ def popular_paging(request):
         data['comments'] = len(Comment.objects.filter(
             article=Community.objects.get(pk=data['id'])))
         data['user'] = User.objects.get(pk=data['user_id']).username
+        if User.objects.get(pk=data['user_id']).profile:
+            data['nickname'] = User.objects.get(pk=data['user_id']).profile.nickname
         data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
         data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
     print(articles)
@@ -273,5 +297,24 @@ def popular_search(request):
     context = {
         'articles': articles,
         'len':len(articles),
+    }
+    return JsonResponse(context)
+
+@login_required
+def comment_select(request,community_pk, comment_pk):
+    article=get_object_or_404(Community,pk=community_pk)
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    
+    user=request.user
+    
+    # 사용자가 채택 인원이 없으면 지우고 없으면 추가한다.
+    if user in comment.comment_select_users.all():
+        comment.comment_select_users.remove(user)
+        likedd = False
+    else:
+        comment.comment_select_users.add(user)
+        likedd = True
+    context = {
+        'likedd': likedd,
     }
     return JsonResponse(context)

@@ -15,7 +15,8 @@ def index(request):
 
 
 def analysis(request):
-    key = "AIzaSyD3kvta4Kf34Gvt9P3nUvFk6Jz9aVnVOF8"
+    key = config('KEY')
+    
     url = "https://www.googleapis.com/youtube/v3/search"
     q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
     print(q)
