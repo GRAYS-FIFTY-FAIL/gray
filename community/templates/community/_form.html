@@ -1,17 +1,8 @@
 {% load bootstrap4 %}
 <div class="container">
-  {% if user.username %}
-  <h1> 로그인 되었을 때 </h1>
-  {% else %}
-  <h1> 로그인필요 </h1>
-  {% endif %}
   <div class="row pt-5 px-5">
     <div class="col-xl-12">
-      {% if request.resolver_match.url_name == 'create' %}
       <h1>글 생성</h1>
-      {% else %}
-      <h1>글 수정</h1>
-      {% endif %}
     </div>
   </div>
   <div class="row p-5">
