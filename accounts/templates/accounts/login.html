@@ -11,18 +11,16 @@
       <form action="" method="POST">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <button type="submit" class="btn btn-primary btn-block" style="font-size: 30px;">로그인</button>
+        <button type="submit" class="btn btn-primary btn-block" style="font-size: 24px;">로그인</button>
         <div class="row mt-5">
           <div class="col-xl-3"></div>
           <div class="col-xl-6">
-            <a href="{% provider_login_url 'kakao' method='oauth2' %}" class="btn btn-warning btn-block"
-              style="font-size: 30px;">카카오 로그인</a>
-              <a href="{% provider_login_url 'kakao' method='oauth2' %}" class="btn btn-warning btn-block"
-              style="font-size: 30px;"><img src="{% static 'buttons/kakao_login_medium_wide.png' %}"/></a>
-            <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-warning btn-block"
-              style="font-size: 30px;">구글 로그인</a>
-            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-block" style="font-size: 30px;">회원가입</a>
-            <a href="{% url 'accounts:index' %}" class="btn btn-primary btn-block"style="font-size: 30px;">back</a>
+            <a href="{% provider_login_url 'kakao' method='oauth2' %}" class="btn btn-block"
+              style="font-size: 24px; background-color: #FEE500;">카카오 로그인</a>
+            <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-block border"
+              style="font-size: 24px;">구글 로그인</a>
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-block" style="font-size: 24px;">회원가입</a>
+            <a href="{% url 'accounts:index' %}" class="btn btn-primary btn-block"style="font-size: 24px;">back</a>
           </div>
           <div class="col-xl-3"></div>
         </div>
