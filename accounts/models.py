@@ -4,6 +4,7 @@ from imagekit.processors import ResizeToFill
 from django.conf import settings
 from django.contrib.auth.models import UserManager as DefaultUserManager
 
+
 def profile_image_path(instance, filename):
 	return f'user_{instance.user.pk}/{filename}'
 

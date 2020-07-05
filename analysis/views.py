@@ -9,12 +9,20 @@ from . import senti_dict
 import requests
 # Create your views here.
 from decouple import config
-
+from django.contrib.auth.models import User, AnonymousUser
 def index(request):
-    return redirect(request, 'analysis:analysis')
+
+
+    return redirect('analysis:analysis')
 
 
 def analysis(request):
+    if request.user.username != "":
+        try:
+            if request.user.profile:
+                print('있다.')
+        except User.profile.RelatedObjectDoesNotExist:
+            return redirect('accounts:profile_update')
     youtube = list()
     """ 
     key = config('KEY')
