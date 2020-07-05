@@ -153,7 +153,7 @@ MEDIA_ROOT = (os.path.join(BASE_DIR, 'media'))
 SITE_ID = 2
 SOCIAL_AUTH_URL_NAMESPACE = 'accounts'
 LOGIN_REDIRECT_URL = 'analysis:analysis'
-
+SOCIALACCOUNT_AUTO_SIGNUP = False
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
