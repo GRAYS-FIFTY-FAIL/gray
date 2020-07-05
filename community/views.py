@@ -36,8 +36,9 @@ def index(request):
     populars = paginator_popular.get_page(page)
     form = CommunityForm()
     comment_form = CommentForm()
+    youtube = list()
+    """ 
     key = config('KEY')
-    
     url = "https://www.googleapis.com/youtube/v3/search"
     q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
     print(q)
@@ -48,10 +49,10 @@ def index(request):
     print(requestUrl)
     response = requests.get(requestUrl)
     data = response.json()
-    youtube = list()
+    
     for i in data['items']:
         youtube.append((i['snippet']['thumbnails']['medium']['url'],i['snippet']['title'],i['snippet']['publishedAt'][0:10],i['id']['videoId']))
-
+    """
     context = {
         'articles': articles,
         'populars':populars,
