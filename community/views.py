@@ -20,6 +20,12 @@ import requests
 
 @login_required
 def index(request):
+    if request.user.username != "":
+        try:
+            if request.user.profile:
+                print('있다.')
+        except User.profile.RelatedObjectDoesNotExist:
+            return redirect('accounts:profile_update')
     # embed()
     articles = Community.objects.all().order_by('-pk')
     populars = Community.objects.all().order_by('-hits')
