@@ -19,13 +19,13 @@
       <div class="col-xl-12">
         <div class="row border rounded-lg p-5">
           <div class="col-xl-3">
-           
-              {% if person.profile.image %}
-              <img src="{{ person.profile.image.url}}" width=120, alt="{{ person.profile.image }}">
-              <br />
-              <br />
-              {% endif %}
-              <h1>
+
+            {% if person.profile.image %}
+            <img src="{{ person.profile.image.url}}" width=120, alt="{{ person.profile.image }}">
+            <br />
+            <br />
+            {% endif %}
+            <h1 style="font-size: vi;">
               {% if person.profile.nickname %}
               {{ person.profile.nickname }}
               {% else %}
@@ -34,8 +34,8 @@
             </h1>
             <br>
             <span>받은 채택 수 : </span><span style="font-size: larger;">{{ selected.count }}</span>
-            <br/>
-            <br/>
+            <br />
+            <br />
             <span>받은 좋아요 : </span><span style="font-size: larger;">{{ like }}</span>
           </div>
           <div class="col-xl-9">
@@ -44,10 +44,10 @@
             <div>
               {{ person.profile.introduction | safe }}
             </div>
-            <br/>
-            <hr/>
-            <br/>
-            <br/>
+            <br />
+            <hr />
+            <br />
+            <br />
             <h2> 작성한 게시물</h2>
             <table class="table" style="font-size: 1vmax">
               <thead>
@@ -73,7 +73,7 @@
                       style="text-decoration: none;">{{ article.user.profile.nickname }}</a></td>
                   {% else %}
                   <td><a class="text-dark" href="javascript:profile('{{article.user}}')"
-                    style="text-decoration: none;">{{ article.user }}</a></td>
+                      style="text-decoration: none;">{{ article.user }}</a></td>
                   {% endif %}
                   <td>{{ article.updated_at|date:'Y/n/j' }}</td>
                   <td>{{ article.hits }}</td>
@@ -82,8 +82,8 @@
                 {% endfor %}
               </tbody>
             </table>
-            <br/>
-            <br/>
+            <br />
+            <br />
             <h2> 채택 받은 게시물</h2>
             <table class="table" style="font-size: 1vmax">
               <thead>
@@ -109,7 +109,7 @@
                       style="text-decoration: none;">{{ article.user.profile.nickname }}</a></td>
                   {% else %}
                   <td><a class="text-dark" href="javascript:profile('{{article.user}}')"
-                    style="text-decoration: none;">{{ article.user }}</a></td>
+                      style="text-decoration: none;">{{ article.user }}</a></td>
                   {% endif %}
                   <td>{{ article.updated_at|date:'Y/n/j' }}</td>
                   <td>{{ article.hits }}</td>
@@ -118,9 +118,9 @@
                 {% endfor %}
               </tbody>
             </table>
-            
-            <br/>
-            <br/>
+
+            <br />
+            <br />
             <h2> 좋아요 누른 게시물</h2>
             <table class="table" style="font-size: 1vmax">
               <thead>
@@ -146,7 +146,7 @@
                       style="text-decoration: none;">{{ article.user.profile.nickname }}</a></td>
                   {% else %}
                   <td><a class="text-dark" href="javascript:profile('{{article.user}}')"
-                    style="text-decoration: none;">{{ article.user }}</a></td>
+                      style="text-decoration: none;">{{ article.user }}</a></td>
                   {% endif %}
                   <td>{{ article.updated_at|date:'Y/n/j' }}</td>
                   <td>{{ article.hits }}</td>
@@ -155,8 +155,8 @@
                 {% endfor %}
               </tbody>
             </table>
-            <br/>
-            <br/>
+            <br />
+            <br />
           </div>
         </div>
       </div>
@@ -178,15 +178,15 @@
 </div>
 <script>
   function detail(id, title) {
-      $.ajax({
-        beforeSend: function (xhr, settings) {
-          win = window.open("/community/"+id+"/detail")
-        },
-        cache: false,
-        success: function () {
-          win.document.title = title
-        }
-      })
-    }
+    $.ajax({
+      beforeSend: function (xhr, settings) {
+        win = window.open("/community/" + id + "/detail")
+      },
+      cache: false,
+      success: function () {
+        win.document.title = title
+      }
+    })
+  }
 </script>
 {% endblock %}

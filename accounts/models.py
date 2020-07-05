@@ -11,7 +11,7 @@ def profile_image_path(instance, filename):
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    nickname = models.CharField(max_length=40, blank =True)
+    nickname = models.CharField(max_length=10, blank =True)
     introduction = models.TextField(blank=True)
     image = ProcessedImageField (
     		blank = True,
