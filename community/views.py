@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404 , HttpResponse
 from .models import Community, Comment
 from .forms import CommunityForm, CommentForm
 # DVDH
@@ -23,7 +23,7 @@ def index(request):
     if request.user.username != "":
         try:
             if request.user.profile:
-                print('있다.')
+                pass
         except User.profile.RelatedObjectDoesNotExist:
             return redirect('accounts:profile_update')
     # embed()
@@ -47,12 +47,10 @@ def index(request):
     key = config('KEY')
     url = "https://www.googleapis.com/youtube/v3/search"
     q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
-    print(q)
     my_type = "type=video"
     part = "part=snippet"
     maxResults = "maxResults=10"
     requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
-    print(requestUrl)
     response = requests.get(requestUrl)
     data = response.json()
     
@@ -137,7 +135,7 @@ def delete(request, community_pk):
     article = get_object_or_404(Community, pk=community_pk)
     if article.user.username == request.user.username:
         article.delete()
-        return redirect('community:index')
+        return HttpResponse('<script type="text/javascript">window.close(); window.opener.parent.location.href = "javascript:all_paging(1)";</script>')
 
 
 @login_required
@@ -230,12 +228,10 @@ def all_paging(request):
         data['comments'] = len(Comment.objects.filter(
             article=Community.objects.get(pk=data['id'])))
         data['user'] = User.objects.get(pk=data['user_id']).username
-        print(User.objects.get(pk=data['user_id']))
         if User.objects.get(pk=data['user_id']).profile:
             data['nickname'] = User.objects.get(pk=data['user_id']).profile.nickname
         data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
         data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
-    print(articles)
     context = {
         'articles': articles,
         'page':int(page),
@@ -250,7 +246,6 @@ def popular_paging(request):
     page = request.GET.get('page')
     if page == None:
         page = 1
-    print(page)
     articles = paginator.get_page(page).object_list.values()
     articles = list(articles)
    
@@ -262,7 +257,6 @@ def popular_paging(request):
             data['nickname'] = User.objects.get(pk=data['user_id']).profile.nickname
         data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
         data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
-    print(articles)
     context = {
         'articles': articles,
         'page':int(page),
@@ -282,7 +276,6 @@ def all_search(request):
         data['user'] = User.objects.get(pk=data['user_id']).username
         data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
         data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
-    print(articles)
     context = {
         'articles': articles,
         'len':len(articles),
@@ -300,7 +293,6 @@ def popular_search(request):
         data['user'] = User.objects.get(pk=data['user_id']).username
         data['likes'] = Community.objects.get(pk=data['id']).like_users.count()
         data['date'] = str(data['updated_at'].year)+"/"+str(data['updated_at'].month)+"/"+str(data['updated_at'].day)
-    print(articles)
     context = {
         'articles': articles,
         'len':len(articles),

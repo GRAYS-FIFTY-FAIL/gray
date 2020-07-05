@@ -85,7 +85,6 @@ def profile(request, username):
     articles = Community.objects.filter(user=person)
     # 좋아요받은 게시물 개수
     like = Community.objects.filter(Q(user=person)&Q(like_users__isnull=False)).count()
-    print(like)
     context = {
         'like':like,
         'articles':articles,
@@ -100,7 +99,6 @@ def profile(request, username):
 def profile_update(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     introduction = ""
-    print(profile)
     if profile:
         profile = request.user.profile
         if request.method == 'POST':

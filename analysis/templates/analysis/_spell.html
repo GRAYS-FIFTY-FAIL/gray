@@ -63,7 +63,6 @@
     for (var i = 0; i < document.getElementsByClassName('note-editable')[0].getElementsByTagName('p').length; i++) {
       text += document.getElementsByClassName('note-editable')[0].getElementsByTagName('p')[i].innerText + "\n"
     }
-    alert(text)
     $.ajax({
       beforeSend: function (xhr, settings) {
         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {

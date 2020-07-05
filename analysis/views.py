@@ -20,7 +20,7 @@ def analysis(request):
     if request.user.username != "":
         try:
             if request.user.profile:
-                print('있다.')
+                pass
         except User.profile.RelatedObjectDoesNotExist:
             return redirect('accounts:profile_update')
     youtube = list()
@@ -28,12 +28,10 @@ def analysis(request):
     key = config('KEY')
     url = "https://www.googleapis.com/youtube/v3/search"
     q = random.choice(["자기소개서","면접","자소서","면접왕이형"])
-    print(q)
     my_type = "type=video"
     part = "part=snippet"
     maxResults = "maxResults=10"
     requestUrl = f"{url}?key={key}&{part}&{my_type}&q={q}&{maxResults}"
-    print(requestUrl)
     response = requests.get(requestUrl)
     data = response.json()
     
@@ -49,7 +47,6 @@ def spell_check(request):
     # 가져온 텍스트 정제 1.줄바꿈 맞춰주기
     data = request.POST.get('data')
     data = data.replace("\n", "　")
-    print(data)
     # 돌리기 최대 500자까지 지원함
     check_result = spell_checker.check(data).as_dict()
     checked = check_result.get('checked')
@@ -71,7 +68,6 @@ def spell_check(request):
     original = result.get('original')
     checked = result.get('checked')
     """
-    print(check_result)
     context = {
         'checked': checked
     }
@@ -84,7 +80,6 @@ def words_check(request):
     data = request.POST.get('data')
     komoran = Komoran()
     words = Counter(komoran.nouns(data))
-    print(words.keys())
     # 1글자 단어 걸러내기
     nouns = dict()
     for data in words.keys():
@@ -141,13 +136,9 @@ def senti_check(request):
             neg_p = neg_p + b * words.get(data) * weight
             neg_c = neg_c + words.get(data) * weight
             total = total - (b * words.get(data)) * weight
-    print(str(pos_p) + " "+str(pos_c))
-    print(str(neg_p) + " "+str(neg_c))
-    print(total)
     if pos_c+neg_c != 0:
         total = total/(pos_c+neg_c)
     total = round(total*100,1)
-    print(total)
     pos.sort(key=lambda element: element[4], reverse=True)
     context = {
         'pos': pos,
